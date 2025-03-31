@@ -8,12 +8,12 @@
 !README.md       
 
 
-!/IsaacGymEnvs/isaacgymenvs/cfg/
-!/IsaacGymEnvs/isaacgymenvs/cfg/**
-!/IsaacGymEnvs/assets/urdf/gogoro/
-!/IsaacGymEnvs/assets/urdf/gogoro/**
-!/IsaacGymEnvs/isaacgymenvs/tasks/
-!/IsaacGymEnvs/isaacgymenvs/tasks/**
+!/isaacgymenvs/cfg/
+!/isaacgymenvs/cfg/**
+!/assets/urdf/gogoro/
+!/assets/urdf/gogoro/**
+!/isaacgymenvs/tasks/
+!/isaacgymenvs/tasks/**
 
 !export.py
 !train.py

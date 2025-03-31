@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="terrain">
+
+  <link name="base">
+  </link>
+
+  <link name="t">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="/home/ugo/NVIDIA_OMNIVERSE/PROJECTS/IsaacGymEnvs/assets/urdf/gogoro/meshes/road/plane.obj" scale="1.0 1.0 1.0"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="/home/ugo/NVIDIA_OMNIVERSE/PROJECTS/IsaacGymEnvs/assets/urdf/gogoro/meshes/road/plane.obj" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.00 0.000 0.00"/>
+      <mass value="0.1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+
+
+  <joint name="base_fixed" type="fixed">
+    <origin xyz="0 0 -60" rpy="0 0 0"/>
+    <parent link="base"/>
+    <child link="t"/>
+  </joint>
+
+
+</robot>

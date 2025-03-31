@@ -1,0 +1,174 @@
+name: Gogoro
+physics_engine: ${..physics_engine}
+#physics_engine: 'flex'
+
+env:
+    numEnvs: 2048
+    max_steps: 2000 #3000
+    cameraFollow: True
+
+sim:
+    dt: 0.03
+    up_axis: "z"
+    use_gpu_pipeline: ${eq:${...pipeline},"gpu"}
+    gravity: [0.0, 0.0, -9.81]
+    substeps : 3
+
+
+
+
+    physx:
+        solver_type: 1
+        num_threads: ${....num_threads}
+        use_gpu: ${contains:"cuda",${....sim_device}} # set to False to run on CPU
+
+
+        default_buffer_size_multiplier: 5.0
+        max_gpu_contact_pairs: 524288 # 8*1024*1024
+
+
+        contact_offset: 0.01
+        rest_offset: 0.0
+        bounce_threshold_velocity: 0.6
+        # friction_offset_threshold : 0.02
+        # friction_correlation_distance : 0.02
+        # num_position_iterations: 1
+        # num_velocity_iterations: 1
+        max_depenetration_velocity: 6.0
+
+        num_subscenes: ${....num_subscenes}
+        contact_collection: 0 # 0: CC_NEVER (don't collect contact info), 1: CC_LAST_SUBSTEP (collect only contacts on last substep), 2: CC_ALL_SUBSTEPS (broken - do not use!)
+
+#[Warning] [carb.gym.plugin] Unable to find collision mesh for rigid shape 2 in collisionMeshHandles 
+
+
+noises:
+    
+    use_noise : True
+
+    imu_filter_noise    : [-0.01,0.01]
+    imu_noise           : [-0.01,0.01]
+    imu_x_offset        : [-0.03,0.03]
+
+    speed_sensor_noise  : [0,0.1]
+
+    seat_offset_x_range : [-0.1,0.1]
+    seat_offset_y_range : [-0.05,0.05]
+    seat_offset_z_range : [-0.1,0.05]
+
+    spawn_x_angle       : [-0.000001,0.0000001] #[-0.02,0.02]
+    steering_action_noise: [-0.03,0.03]
+
+    steering_offset: [-0.02,0.02]
+    command_delay  : [0,5]
+    steering_damping_range : [1000,5000] 
+
+    speed_range :  [1,2] #[7,10]
+    speed_freq_update : 300
+    yaw_freq_update   : 300 #max rad from curent yaw
+
+
+
+
+
+
+joints_pos:
+
+    l_arm_el_y: 0.0 #-0.844
+    l_arm_wr_r: 0.0
+    head_y: 0.0
+    r_arm_grip: 0.0
+    l_arm_wr_p: 0.0
+    torso_y: 0.0
+    r_arm_sh_r: -1.57
+    l_arm_sh_p1: 0.0
+    l_arm_sh_r: 1.57
+    l_leg_an_r: 0.0
+    l_leg_an_p: 0.0
+    r_leg_hip_p: 1.4
+    r_leg_an_p: 0.0
+    l_arm_wr_y: 0.0
+    l_leg_hip_p: -1.4
+    r_leg_hip_y: 0.0
+    l_leg_hip_r: 0.0
+    l_leg_kn_p:  1.4
+    r_arm_sh_p2: 0.0
+    r_arm_sh_p1: 0.0
+    l_leg_hip_y: 0.0
+    r_leg_hip_r: 0.0
+    l_arm_sh_p2: 0.0
+    r_arm_wr_y: 0.0
+    head_p:     0.0
+    r_arm_wr_p: 0.0
+    r_arm_wr_r: 0.0
+    r_arm_el_y: 0.0 #0.876
+    l_arm_grip: 0.0
+    r_leg_an_r: 0.0
+    r_leg_kn_p: -1.4
+
+
+
+    # l_arm_el_y: 0.2 #-0.844
+    # l_arm_wr_r: -0.260
+    # head_y: -0.003
+    # r_arm_grip: 1.060
+    # l_arm_wr_p: -0.076
+    # torso_y: -0.052
+    # r_arm_sh_r: -1.613
+    # l_arm_sh_p1: 0.214
+    # l_arm_sh_r: 1.459
+    # l_leg_an_r: 0.120
+    # l_leg_an_p: -0.390
+    # r_leg_hip_p: 1.165
+    # r_leg_an_p: 0.354
+    # l_arm_wr_y: -0.242
+    # l_leg_hip_p: -1.193
+    # r_leg_hip_y: 0.277
+    # l_leg_hip_r: 0.110
+    # l_leg_kn_p: 0.958
+    # r_arm_sh_p2: 0.288
+    # r_arm_sh_p1: -0.221
+    # l_leg_hip_y: -0.095
+    # r_leg_hip_r: -0.194
+    # l_arm_sh_p2: 0.036
+    # r_arm_wr_y: 0.160
+    # head_p:     0.002
+    # r_arm_wr_p: -0.027
+    # r_arm_wr_r: 0.175
+    # r_arm_el_y: -0.2 #0.876
+    # l_arm_grip: 1.043
+    # r_leg_an_r: -0.162
+    # r_leg_kn_p: -0.975
+
+task:
+    randomize: True
+    randomization_params:
+        frequency: 6000  # Define how many frames between generating new randomizations
+
+        # Noise in the observations and actions 
+        # is set manually in the code
+        # other kind of offsets are set directly in the code
+        sim_params: 
+            gravity:
+                range: [-0.4, 0.4]
+                operation: "additive"
+                distribution: "uniform"
+
+        actor_params:
+            Gogoro:
+                rigid_body_properties:
+                    mass: 
+                        range: [0.9, 1.1]
+                        operation: "scaling"
+                        distribution: "uniform"
+                        setup_only: False
+
+                    # dof_properties:
+                    # stiffness:
+                    #     range: [0.7, 1.3]
+                    #     operation: "scaling"
+                    #     distribution: "uniform"
+                    # damping:
+                    #     range: [0.5, 2]
+                    #     operation: "scaling"
+                    #     distribution: "uniform"
