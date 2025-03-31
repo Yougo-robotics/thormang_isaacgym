@@ -1476,6 +1476,11 @@
       </geometry>
       <material name="green" />
     </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
+      <mass value="0.00001" />
+      <inertia ixx="1.666666626931601e-08" ixy="0" ixz="0" iyy="1.666666626931601e-08" iyz="0" izz="1.666666626931601e-08" />
+    </inertial>
   </link> 
   <link name="dummy_link2">
     <visual>
@@ -1485,33 +1490,41 @@
       </geometry>
       <material name="green" />
     </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
+      <mass value="0.00001" />
+      <inertia ixx="1.666666626931601e-08" ixy="0" ixz="0" iyy="1.666666626931601e-08" iyz="0" izz="1.666666626931601e-08" />
+    </inertial>
   </link>
 
 
-
-  <joint name="base_z" type="fixed">
+  <joint name="base_z" type="prismatic">
     <parent link="imu_link" />
     <child link="dummy_link1" />
     <origin rpy="0 0 0" xyz="0 0.0 0.0" />
     <axis xyz="0 0 1" />
-    <limit effort="0.0" lower="-0.1" upper="0.1" velocity="0.00001" />
+    <dynamics damping="100.0" />
+    <limit effort="0.0" lower="-0.1" upper="0.1" velocity="1" />
   </joint>
 
-  <joint name="base_x" type="fixed">
+  <joint name="base_x" type="prismatic">
     <parent link="dummy_link1" />
     <child link="dummy_link2" />
     <origin rpy="0 0 0" xyz="0 0 0" />
     <axis xyz="1 0 0" />
-    <limit effort="0.0" lower="-0.1" upper="0.1" velocity="0.00001" />
+    <dynamics damping="100.0" />
+    <limit effort="0.0" lower="-0.1" upper="0.1" velocity="1" />
   </joint>
 
-  <joint name="base_y" type="fixed">
+  <joint name="base_y" type="prismatic">
     <parent link="dummy_link2" />
     <child link="body" />
     <origin rpy="0 0 0" xyz="0 0.0 -0.9" />
     <axis xyz="0 1 0" />
-    <limit effort="0.0" lower="-0.1" upper="0.1" velocity="0.00001" />
+    <dynamics damping="100.0" />
+    <limit effort="0.0" lower="-0.1" upper="0.1" velocity="1" />
   </joint>
+
 
 
 

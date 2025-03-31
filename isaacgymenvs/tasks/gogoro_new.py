@@ -159,7 +159,7 @@ class Gogoro(VecTask):
         self._create_ground_plane_flat()
 
         self._create_envs()
-        # self.apply_randomizations(self.randomization_params)
+        self.apply_randomizations(self.randomization_params)
 
 
     def _create_ground_plane(self):
@@ -196,7 +196,8 @@ class Gogoro(VecTask):
     def _create_envs(self):
 
         asset_root = "/home/erc/RL_NVIDIA/IsaacGymEnvs/assets"
-        asset_file = "urdf/gogoro/urdf/scooter_V14.urdf"
+        #scooter_13 IMU is not at the proper place but its ok since we do not take linear accel into account
+        asset_file = "urdf/gogoro/urdf/scooter_V13.urdf"
 
         asset_options = gymapi.AssetOptions()
         asset_options.fix_base_link = DEBUGFIXBASE
@@ -205,7 +206,10 @@ class Gogoro(VecTask):
         asset_options.enable_gyroscopic_forces = True
         asset_options.disable_gravity = False
         asset_options.override_inertia = False 
-        #asset_options.linear_damping = 0.01
+        asset_options.linear_damping = 0.01
+        asset_options.armature = 0.0001
+        asset_options.thickness = 0.001
+
         asset = self.gym.load_asset(self.sim, asset_root, asset_file, asset_options)
 
         # Get number of DOFs and DOF names
@@ -444,14 +448,16 @@ class Gogoro(VecTask):
 
         buffer_obs_rand = self.buffer_obs.clone()
 
-        # buffer_obs_rand[:,-1,0] += self.get_randoms_norm(buffer_obs_rand.shape[0],self.imu_filter_noise) + self.imu_offsets
-        # buffer_obs_rand[:,-1,1] += self.get_randoms_norm(buffer_obs_rand.shape[0],self.imu_noise)
-        # buffer_obs_rand[:,-1,2] += self.get_randoms_norm(buffer_obs_rand.shape[0],self.imu_noise)
-        # buffer_obs_rand[:,-1,3] += self.get_randoms_norm(buffer_obs_rand.shape[0],self.speed_sensor_noise)
-        # buffer_obs_rand[:,-1,3] += self.curent_speed_offset
-        # buffer_obs_rand[:,-1,3]  = torch.clamp(buffer_obs_rand[:,-1,4],0,5.0)
-        # buffer_obs_rand[:,-1,3]  = torch.round(buffer_obs_rand[:,-1,4])
-        # buffer_obs_rand[:,-1,4] += self.get_randoms_norm(buffer_obs_rand.shape[0],self.imu_filter_noise)
+        buffer_obs_rand[:,-1,0] += self.get_randoms_norm(buffer_obs_rand.shape[0],self.imu_filter_noise) + self.imu_offsets
+        buffer_obs_rand[:,-1,1] += self.get_randoms_norm(buffer_obs_rand.shape[0],self.imu_noise)
+        buffer_obs_rand[:,-1,2] += self.get_randoms_norm(buffer_obs_rand.shape[0],self.imu_noise)
+
+        buffer_obs_rand[:,-1,3] += self.get_randoms_norm(buffer_obs_rand.shape[0],self.speed_sensor_noise)
+        buffer_obs_rand[:,-1,3] += self.curent_speed_offset
+        buffer_obs_rand[:,-1,3]  = torch.clamp(buffer_obs_rand[:,-1,4],0,5.0)
+        buffer_obs_rand[:,-1,3]  = torch.round(buffer_obs_rand[:,-1,4])
+
+        buffer_obs_rand[:,-1,4] += self.get_randoms_norm(buffer_obs_rand.shape[0],self.imu_filter_noise)
 
         self.obs_buf = buffer_obs_rand.flatten(start_dim=1)
 
@@ -467,7 +473,7 @@ class Gogoro(VecTask):
         
     def randomize(self,env_ids):
 
-        #self.apply_randomizations(self.randomization_params)
+        self.apply_randomizations(self.randomization_params)
         _ids = env_ids
         n_id = _ids.shape[0]
         self.curent_speed[_ids]         = self.get_randoms(n_id,self.speed_range)
@@ -528,7 +534,7 @@ class Gogoro(VecTask):
             test[env_ids_int32,2] = torch.clamp(test[env_ids_int32,2],0,100.0)
 
         else:
-            test[env_ids_int32,2] = 0.03+0.9
+            test[env_ids_int32,2] = 0.03
 
 
 
@@ -552,15 +558,18 @@ class Gogoro(VecTask):
 
         self.config_vector[env_ids_int32,4] =  self.get_randoms_norm(nbresets,self.steering_offset)
         for id in env_ids:
-            # self.dof_props['driveMode'][self.dof_name_to_id['base_x']] = gymapi.DOF_MODE_NONE
-            # self.dof_props["lower"][self.dof_name_to_id['base_x']]     = self.config_vector[id,0]
-            # self.dof_props["upper"][self.dof_name_to_id['base_x']]     = self.config_vector[id,0]+0.0001
-            # self.dof_props['driveMode'][self.dof_name_to_id['base_y']] = gymapi.DOF_MODE_NONE
-            # self.dof_props["lower"][self.dof_name_to_id['base_y']]     = self.config_vector[id,1]
-            # self.dof_props["upper"][self.dof_name_to_id['base_y']]     = self.config_vector[id,1]+0.0001
-            # self.dof_props['driveMode'][self.dof_name_to_id['base_z']] = gymapi.DOF_MODE_NONE
-            # self.dof_props["lower"][self.dof_name_to_id['base_z']]     = self.config_vector[id,2]
-            # self.dof_props["upper"][self.dof_name_to_id['base_z']]     = self.config_vector[id,2]+0.0001
+
+            self.dof_props['driveMode'][self.dof_name_to_id['base_x']] = gymapi.DOF_MODE_NONE
+            self.dof_props["lower"][self.dof_name_to_id['base_x']]     = self.config_vector[id,0]
+            self.dof_props["upper"][self.dof_name_to_id['base_x']]     = self.config_vector[id,0]+0.0001
+
+            self.dof_props['driveMode'][self.dof_name_to_id['base_y']] = gymapi.DOF_MODE_NONE
+            self.dof_props["lower"][self.dof_name_to_id['base_y']]     = self.config_vector[id,1]
+            self.dof_props["upper"][self.dof_name_to_id['base_y']]     = self.config_vector[id,1]+0.0001
+            
+            self.dof_props['driveMode'][self.dof_name_to_id['base_z']] = gymapi.DOF_MODE_NONE
+            self.dof_props["lower"][self.dof_name_to_id['base_z']]     = self.config_vector[id,2]
+            self.dof_props["upper"][self.dof_name_to_id['base_z']]     = self.config_vector[id,2]+0.0001
 
             self.imu_offsets[id]   = self.config_vector[id,3]
             self.steer_offsets[id] = self.config_vector[id,4]

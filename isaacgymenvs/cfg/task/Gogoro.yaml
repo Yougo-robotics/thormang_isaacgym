@@ -39,7 +39,7 @@ noises:
     steering_offset     : [0,0.01]
 
     imu_filter_noise    : [0,0.001]
-    imu_noise           : [0,0.1]
+    imu_noise           : [0,0.001]
     seat_offset_xr_range: [0,0.05]
 
     speed_sensor_offset : [-0.5,0.5]

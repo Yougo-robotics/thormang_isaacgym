@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <robot name="gogoro_and_thormang3">
   
   <gazebo>
@@ -1776,8 +1777,6 @@
     </visual>
   </link>
 
-
-
   <link name="dummy_link1">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0" />
@@ -1808,8 +1807,6 @@
   </link>
 
 
-
-
   <joint name="base_z" type="prismatic">
     <parent link="body" />
     <child link="dummy_link1" />
@@ -1835,7 +1832,6 @@
     <dynamics damping="0.0" />
     <limit effort="0.0" lower="-0.1" upper="0.1" velocity="1" />
   </joint>
-
 
 
 
