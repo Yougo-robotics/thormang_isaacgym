@@ -1,13 +1,12 @@
 #ignoring everything
 *
+!*/
+
 #Always un-ignore your .gitignore file
 !.gitignore      
 # Un-ignore README.md
 !README.md       
 
-!export.py
-!train.py
-!__init__.py
 
 !/IsaacGymEnvs/isaacgymenvs/cfg/
 !/IsaacGymEnvs/isaacgymenvs/cfg/**
@@ -15,3 +14,7 @@
 !/IsaacGymEnvs/assets/urdf/gogoro/**
 !/IsaacGymEnvs/isaacgymenvs/tasks/
 !/IsaacGymEnvs/isaacgymenvs/tasks/**
+
+!export.py
+!train.py
+!__init__.py
