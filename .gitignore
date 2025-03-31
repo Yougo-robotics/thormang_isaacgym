@@ -1,5 +1,6 @@
 #ignoring everything
 *
+!*/
 
 #Always un-ignore your .gitignore file
 !.gitignore      
